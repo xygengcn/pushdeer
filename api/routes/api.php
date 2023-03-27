@@ -38,6 +38,10 @@ Route::any('/login/unoinid', 'App\Http\Controllers\PushDeerUserController@wecode
 // 推送消息
 Route::middleware('json.request')->any('/message/push', 'App\Http\Controllers\PushDeerMessageController@push');
 
+// 管理员接口
+Route::post('/admin/message/all', 'App\Http\Controllers\PushDeerAdminController@messageAll');
+Route::post('/admin/user/key', 'App\Http\Controllers\PushDeerAdminController@getUserPushKey');
+
 
 // 自动登入，适用于通过 token 进行操作的接口
 Route::middleware('auto.login')->group(function () {

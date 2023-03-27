@@ -1,31 +1,38 @@
-version: '2.1'
+version: "2.1"
 services:
   mariadb:
-    image: 'mariadb:10.5.8-focal'
+    image: "mariadb:10.5.8-focal"
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "--silent","--password=$$MYSQL_ROOT_PASSWORD"]
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "--silent",
+          "--password=$$MYSQL_ROOT_PASSWORD",
+        ]
       timeout: 10s
       retries: 3
     volumes:
-      - 'mariadb_data:/var/lib/mysql'
+      - "mariadb_data:/var/lib/mysql"
     environment:
       - MYSQL_ROOT_PASSWORD=theVeryp@ssw0rd
       - MYSQL_DATABASE=pushdeer
-#     ports:
-#       - '3306:3306' 
-  redis: 
-    image: 'bitnami/redis:6.0.16'
+    ports:
+      - "30005:3306"
+  redis:
+    image: "bitnami/redis:6.0.16"
     healthcheck:
-      test: ["CMD", "redis-cli","ping"]
+      test: ["CMD", "redis-cli", "ping"]
     environment:
-      - ALLOW_EMPTY_PASSWORD=yes 
+      - ALLOW_EMPTY_PASSWORD=yes
   app:
     #image: 'webdevops/php-apache:8.0-alpine'
-    build: './docker/web/'
+    build: "./docker/web/"
     ports:
-      - '8800:80'
+      - "30004:80"
     volumes:
-      - './:/app'
+      - "./:/app"
     depends_on:
       mariadb:
         condition: service_healthy
@@ -39,7 +46,7 @@ services:
       - DB_PASSWORD=theVeryp@ssw0rd
       - GO_PUSH_IOS_TOPIC=com.pushdeer.self.ios
       - GO_PUSH_IOS_CLIP_TOPIC=com.pushdeer.self.ios.Clip
-      - APP_DEBUG=false
+      - APP_DEBUG=true
       - MQTT_API_KEY=9LKo3
       - MQTT_ON=false
   # mqtt:
@@ -51,6 +58,6 @@ services:
   #     - MQTT_PORT=1883
   #     - MQTT_USER=easy
   #     - MQTT_PASSWORD=y0urp@ss
-  #     - MQTT_BASE_TOPIC=default    
+  #     - MQTT_BASE_TOPIC=default
 volumes:
   mariadb_data:

@@ -1,31 +1,38 @@
-version: '2.1'
+version: "2.1"
 services:
   mariadb:
-    image: 'mariadb:10.5.8-focal'
+    image: "mariadb:10.5.8-focal"
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "--silent","--password=$$MYSQL_ROOT_PASSWORD"]
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "--silent",
+          "--password=$$MYSQL_ROOT_PASSWORD",
+        ]
       timeout: 10s
       retries: 3
     volumes:
-      - 'mariadb_data:/var/lib/mysql'
+      - "mariadb_data:/var/lib/mysql"
     environment:
       - MYSQL_ROOT_PASSWORD=theVeryp@ssw0rd
       - MYSQL_DATABASE=pushdeer
     ports:
-      - '3306:3306' 
-  redis: 
-    image: 'bitnami/redis:6.0.16'
+      - "3306:3306"
+  redis:
+    image: "bitnami/redis:6.0.16"
     healthcheck:
-      test: ["CMD", "redis-cli","ping"]
+      test: ["CMD", "redis-cli", "ping"]
     environment:
-      - ALLOW_EMPTY_PASSWORD=yes 
+      - ALLOW_EMPTY_PASSWORD=yes
   app:
     #image: 'webdevops/php-apache:8.0-alpine'
-    build: './docker/web/'
+    build: "./docker/web/"
     ports:
-      - '8800:80'
+      - "30004:80"
     volumes:
-      - './:/app'
+      - "./:/app"
     depends_on:
       mariadb:
         condition: service_healthy
@@ -37,5 +44,6 @@ services:
       - DB_USERNAME=root
       - DB_DATABASE=pushdeer
       - DB_PASSWORD=theVeryp@ssw0rd
+      - APP_DEBUG=true
 volumes:
   mariadb_data:
